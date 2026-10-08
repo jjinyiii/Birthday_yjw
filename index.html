@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#FAF8F5" />
+    <title>给 尤静雯 的生日手帐</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+      :root {
+        --cream: #faf8f5;
+        --paper: #fffdf8;
+        --pink: #f3e8e8;
+        --pink-deep: #e7c7c4;
+        --rose: #b97770;
+        --oat: #e9dfd3;
+        --wood: #8d6e69;
+        --ink: #4a3e3d;
+        --line: #ead8cf;
+        --shadow: rgba(74, 62, 61, 0.12);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        background: var(--cream);
+        color: var(--ink);
+        font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+        line-height: 1.6;
+      }
+
+      body.modal-open { overflow: hidden; }
+
+      button, a { touch-action: manipulation; }
+
+      button:focus-visible, a:focus-visible {
+        outline: 3px solid rgba(185, 119, 112, 0.5);
+        outline-offset: 3px;
+      }
+
+      .skip-link {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 100;
+        transform: translateY(-160%);
+        background: var(--ink);
+        color: var(--paper);
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: transform 180ms ease-out;
+      }
+
+      .skip-link:focus { transform: translateY(0); }
+
+      .page-wrap {
+        width: min(100% - 28px, 1120px);
+        margin: 0 auto;
+        padding: 28px 0 56px;
+      }
+
+      .site-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 18px;
+      }
+
+      .eyebrow {
+        margin: 0 0 4px;
+        color: var(--wood);
+        font-family: "Caveat", cursive;
+        font-size: 1.2rem;
+        letter-spacing: 0.02em;
+      }
+
+      .site-title {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 500;
+        line-height: 1.05;
+      }
+
+      .record-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        min-height: 48px;
+        padding: 7px 12px 7px 8px;
+        border: 1px solid #d8bbb5;
+        border-radius: 7px;
+        background: var(--pink);
+        color: var(--wood);
+        box-shadow: 0 5px 12px var(--shadow);
+        cursor: pointer;
+        font-size: 0.82rem;
+        transition: transform 180ms ease-out, box-shadow 180ms ease-out;
+      }
+
+      .record-button:hover { transform: translateY(-2px) rotate(1deg); box-shadow: 0 8px 16px var(--shadow); }
+      .record-button:active { transform: translateY(0); }
+
+      .record-disc {
+        display: grid;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border: 1px solid #b98d84;
+        border-radius: 50%;
+        background: #ead9a6;
+        color: var(--wood);
+        font-family: "Caveat", cursive;
+        font-size: 0.85rem;
+      }
+
+      .record-button.is-playing .record-disc { animation: record-spin 4s linear infinite; }
+
+      @keyframes record-spin { to { transform: rotate(360deg); } }
+
+      .route-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 28px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .route-button {
+        min-height: 44px;
+        padding: 8px 15px;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--wood);
+        cursor: pointer;
+        font-size: 0.93rem;
+        transition: background-color 180ms ease-out, border-color 180ms ease-out, transform 180ms ease-out;
+      }
+
+      .route-button:hover { transform: translateY(-1px); }
+      .route-button[aria-current="page"] { border-color: #d8bbb5; background: var(--paper); color: var(--ink); box-shadow: 0 4px 10px var(--shadow); }
+
+      [data-view][hidden] { display: none; }
+
+      .view { animation: view-in 330ms ease-out both; }
+
+      @keyframes view-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      .home-page { position: relative; isolation: isolate; padding: 14px 22px 24px; }
+      .home-page::before { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; left: 6px; border-left: 1px dashed rgba(185, 119, 112, 0.3); pointer-events: none; }
+      .home-page::after { content: ""; position: absolute; z-index: -1; right: 8px; bottom: 8px; width: 70px; height: 70px; border: 1px dashed rgba(185, 119, 112, 0.35); border-radius: 50%; opacity: 0.65; transform: rotate(12deg); pointer-events: none; }
+
+      .home-journal-index { display: flex; align-items: center; gap: 10px; margin: 0 0 15px; color: #a47d75; font-family: "Caveat", cursive; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; }
+      .home-journal-index .index-number { color: var(--rose); font-weight: 700; }
+      .home-journal-index .index-rule { flex: 1; border-top: 1px dashed #d6bdb4; }
+      .home-journal-index .index-note { color: #a58b82; font-size: 0.8rem; }
+
+      .home-intro {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 18px;
+        margin-bottom: 20px;
+      }
+
+      .home-intro-side { display: grid; justify-items: end; gap: 14px; }
+
+      .home-stamp { display: grid; width: 74px; height: 74px; place-items: center; padding: 10px; border: 1px dashed #b98d84; border-radius: 50%; background: rgba(243, 232, 232, 0.72); color: var(--rose); font-family: "Caveat", cursive; font-size: 0.84rem; line-height: 1.05; text-align: center; transform: rotate(-8deg); }
+
+      .intro-note {
+        position: relative;
+        width: min(100%, 510px);
+        padding: 15px 18px 13px;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        box-shadow: 0 6px 14px var(--shadow);
+        transform: rotate(-1deg);
+      }
+
+      .intro-note::before { content: ""; position: absolute; top: -9px; left: 36px; width: 68px; height: 18px; background: rgba(216, 183, 167, 0.68); box-shadow: 0 2px 5px rgba(74, 62, 61, 0.07); transform: rotate(-4deg); }
+      .intro-note::after { content: ""; position: absolute; right: 16px; bottom: 9px; width: 50px; border-bottom: 1px solid rgba(185, 119, 112, 0.38); transform: rotate(-3deg); }
+
+      .intro-note .note-kicker { display: block; margin-bottom: 4px; color: #b08f87; font-family: "Caveat", cursive; font-size: 0.94rem; letter-spacing: 0.08em; }
+      .intro-note p { margin: 0; }
+      .intro-note p { overflow-wrap: anywhere; word-break: break-word; }
+      .intro-note .handwriting { margin-top: 4px; color: var(--wood); font-family: "Caveat", cursive; font-size: 1.4rem; }
+
+      .date-sticker {
+        display: inline-block;
+        padding: 7px 10px 5px;
+        background: #ead9a6;
+        color: #806e43;
+        font-family: "Caveat", cursive;
+        font-size: 1rem;
+        box-shadow: 0 4px 10px var(--shadow);
+        transform: rotate(4deg);
+      }
+
+      .photo-wall {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px 16px;
+        max-width: 840px;
+        margin: 0 auto;
+        padding: 34px 8px 24px;
+      }
+
+      .photo-wall::before { content: "OUR LITTLE ARCHIVE · 01—04"; position: absolute; top: 5px; left: 10px; color: #a47d75; font-family: "Caveat", cursive; font-size: 0.96rem; letter-spacing: 0.08em; }
+      .photo-wall::after { content: ""; position: absolute; top: 13px; right: 14px; width: 76px; border-top: 1px dashed #d6bdb4; transform: rotate(-4deg); }
+
+      .polaroid {
+        position: relative;
+        min-width: 0;
+        padding: 10px 10px 14px;
+        border: 1px solid #eee4dc;
+        background: var(--paper);
+        box-shadow: 0 10px 20px var(--shadow);
+        text-align: center;
+        transition: transform 180ms ease-out, box-shadow 180ms ease-out;
+      }
+
+      .polaroid:hover { z-index: 2; transform: rotate(0deg) translateY(-4px) !important; box-shadow: 0 15px 26px rgba(74, 62, 61, 0.17); }
+      .polaroid:nth-child(1) { transform: rotate(-2.5deg); }
+      .polaroid:nth-child(2) { transform: rotate(2deg) translateY(13px); }
+      .polaroid:nth-child(3) { transform: rotate(1.5deg) translateY(-7px); }
+      .polaroid:nth-child(4) { transform: rotate(-2deg) translateY(9px); }
+
+      .polaroid-media {
+        display: grid;
+        aspect-ratio: 1 / 0.88;
+        overflow: hidden;
+        place-items: center;
+        background: var(--pink-deep);
+      }
+
+      .polaroid-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .polaroid-media img.photo-portrait {
+        object-fit: contain;
+        object-position: center;
+        background: var(--pink);
+      }
+      .polaroid-media.is-missing { background: var(--pink); color: var(--wood); }
+      .polaroid-media.is-missing img { display: none; }
+
+      .photo-placeholder {
+        display: none;
+        padding: 12px;
+        color: var(--wood);
+        font-family: "Caveat", cursive;
+        font-size: 1.25rem;
+      }
+
+      .polaroid-media.is-missing .photo-placeholder { display: block; }
+
+      .polaroid-caption {
+        display: block;
+        margin-top: 8px;
+        color: #6b514d;
+        font-family: "Caveat", cursive;
+        font-size: 1.18rem;
+        line-height: 1.1;
+      }
+
+      .memory-label { display: block; margin-top: 6px; color: #b08f87; font-family: "Caveat", cursive; font-size: 0.82rem; line-height: 1; letter-spacing: 0.04em; }
+
+      .tape {
+        position: absolute;
+        z-index: 2;
+        width: 62px;
+        height: 19px;
+        background: rgba(216, 183, 167, 0.75);
+        box-shadow: 0 2px 5px rgba(74, 62, 61, 0.08);
+      }
+
+      .tape.top-left { top: -10px; left: 28px; transform: rotate(-5deg); }
+      .tape.top-right { top: -9px; right: 20px; transform: rotate(5deg); background: rgba(237, 211, 210, 0.8); }
+
+      .cake-card {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(130px, 170px) minmax(0, 1fr);
+        align-items: center;
+        gap: 18px;
+        width: min(100%, 760px);
+        margin: 18px auto 22px;
+        padding: 18px 20px;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        box-shadow: 0 8px 17px var(--shadow);
+        transform: rotate(-0.7deg);
+      }
+
+      .wish-tag { position: absolute; z-index: 2; top: 12px; right: 38px; padding: 4px 8px 3px; border: 1px solid #d6beb1; background: var(--pink); color: var(--wood); font-family: "Caveat", cursive; font-size: 0.9rem; line-height: 1; transform: rotate(4deg); }
+
+      .cake-card::after { content: ""; position: absolute; top: 9px; right: 17px; width: 10px; height: 25px; border: 2px solid #b98d84; border-radius: 50%; opacity: 0.55; transform: rotate(20deg); }
+
+      .cake-card::before {
+        content: "";
+        position: absolute;
+        top: -10px;
+        left: 34px;
+        width: 64px;
+        height: 18px;
+        background: rgba(216, 183, 167, 0.75);
+        transform: rotate(-4deg);
+      }
+
+      .cake-stage { position: relative; height: 128px; }
+
+      .cake {
+        position: absolute;
+        right: 10px;
+        bottom: 7px;
+        left: 10px;
+        height: 58px;
+        border-radius: 17px 17px 14px 14px;
+        background: #d9a19b;
+        box-shadow: inset 0 -9px 0 #bf827f, 0 6px 8px rgba(74, 62, 61, 0.12);
+      }
+
+      .cake::before {
+        content: "";
+        position: absolute;
+        top: -17px;
+        right: 0;
+        left: 0;
+        height: 29px;
+        border-radius: 50%;
+        background: #f4d8d3;
+        box-shadow: inset 0 -4px 0 #e6b5af;
+      }
+
+      .cake::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 19px;
+        width: 17px;
+        height: 20px;
+        border-radius: 0 0 13px 13px;
+        background: #f4d8d3;
+        box-shadow: 30px 0 0 #f4d8d3, 58px 0 0 #f4d8d3;
+      }
+
+      .cake-decoration {
+        position: absolute;
+        z-index: 2;
+        top: -4px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #e7a19c;
+        box-shadow: inset -2px -2px 0 rgba(157, 83, 82, 0.18);
+      }
+
+      .cake-decoration.left { left: 28px; }
+      .cake-decoration.center { left: 50%; background: #ead9a6; transform: translateX(-50%); }
+      .cake-decoration.right { right: 28px; background: #e9c4ce; }
+
+      .cake-sprinkle {
+        position: absolute;
+        z-index: 3;
+        width: 7px;
+        height: 3px;
+        border-radius: 999px;
+        background: #ead9a6;
+        transform: rotate(18deg);
+      }
+
+      .cake-sprinkle.one { top: 8px; left: 49px; }
+      .cake-sprinkle.two { top: 5px; right: 54px; background: #d8b7a7; transform: rotate(-18deg); }
+      .cake-sprinkle.three { top: 19px; left: 78px; background: #e7c7c4; transform: rotate(8deg); }
+
+      .candle-button {
+        position: absolute;
+        z-index: 3;
+        top: 15px;
+        width: 38px;
+        height: 75px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .candle-button:first-of-type { left: 43px; }
+      .candle-button:last-of-type { left: 88px; }
+
+      .candle-stick {
+        position: absolute;
+        right: 10px;
+        bottom: 0;
+        left: 10px;
+        height: 44px;
+        border-radius: 999px;
+        background: #ead9a6;
+        box-shadow: inset 4px 0 0 rgba(255, 255, 255, 0.45);
+      }
+
+      .candle-button:last-of-type .candle-stick { background: #e7c7c4; }
+
+      .flame {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 16px;
+        height: 21px;
+        border-radius: 50% 50% 45% 45%;
+        background: #e4a35f;
+        opacity: 0;
+        transform: translateX(-50%) scale(0.65);
+        transform-origin: 50% 100%;
+        transition: opacity 180ms ease-out, transform 220ms ease-out;
+      }
+
+      .is-lit .flame { opacity: 1; transform: translateX(-50%) scale(1); animation: flame-soft 1.1s ease-in-out infinite alternate; }
+
+      @keyframes flame-soft { from { transform: translateX(-50%) scale(0.94) rotate(-3deg); } to { transform: translateX(-50%) scale(1.04) rotate(3deg); } }
+
+      .cake-copy h2 { margin: 0; font-family: "Caveat", cursive; font-size: 2rem; font-weight: 600; color: #9b6f69; }
+      .cake-copy p { margin: 4px 0 10px; font-size: 0.91rem; }
+
+      .primary-button, .secondary-button {
+        min-height: 44px;
+        padding: 9px 16px;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.91rem;
+        transition: transform 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out;
+      }
+
+      .primary-button { background: var(--rose); color: var(--paper); box-shadow: 0 4px 0 #9f655f; }
+      .secondary-button { border-color: #c9aaa3; background: var(--paper); color: #70534f; box-shadow: 0 4px 0 #d8c2bb; }
+      .primary-button:hover, .secondary-button:hover { transform: translateY(-2px); }
+      .primary-button:active, .secondary-button:active { transform: translateY(2px); box-shadow: none; }
+      .primary-button[disabled] { opacity: 0.7; cursor: default; }
+
+      .home-actions { position: relative; display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 28px; padding-top: 22px; }
+      .home-actions::before { content: "翻到下一页，继续看"; position: absolute; top: 0; left: 50%; color: #a47d75; font-family: "Caveat", cursive; font-size: 0.95rem; transform: translateX(-50%) rotate(-2deg); }
+
+      .wish-message { min-height: 1.6em; margin: 10px 0 0; color: var(--rose); font-family: "Caveat", cursive; font-size: 1.25rem; }
+
+      .section-heading { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.7rem, 4vw, 2.8rem); font-weight: 500; line-height: 1.15; }
+      .section-kicker { margin: 0 0 6px; color: var(--wood); font-family: "Caveat", cursive; font-size: 1.3rem; }
+      .page-head { max-width: 650px; margin-bottom: 22px; }
+      .page-head p:last-child { margin: 10px 0 0; color: #705d59; }
+
+      .back-link { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 16px; padding: 8px 0; border: 0; background: transparent; color: var(--wood); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+
+      .video-layout { display: grid; gap: 22px; align-items: start; }
+
+      .retro-tv {
+        position: relative;
+        padding: 15px 16px 20px;
+        border: 1px solid #cdb5a7;
+        border-radius: 24px;
+        background: #d5bca9;
+        box-shadow: 0 13px 24px var(--shadow);
+      }
+
+      .tv-screen { overflow: hidden; border: 8px solid #8c6c60; border-radius: 18px; background: #e9dfd3; }
+      .tv-screen video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #e9dfd3; object-fit: cover; }
+      .tv-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 11px; color: #70534f; font-family: "Caveat", cursive; font-size: 1.12rem; }
+      .tv-knobs { display: flex; gap: 8px; }
+      .tv-knobs span { display: block; width: 18px; height: 18px; border: 2px solid #9a7568; border-radius: 50%; background: #ead9a6; }
+      .media-note { margin: 11px 0 0; color: #705d59; font-size: 0.88rem; }
+
+      .letter-stage { display: grid; gap: 18px; justify-items: center; width: 100%; min-width: 0; }
+
+      .envelope-button { position: relative; width: min(100%, 510px); min-height: 260px; padding: 26px 20px 22px; border: 0; background: transparent; cursor: pointer; }
+
+      .envelope { position: relative; width: 100%; max-width: 440px; height: 210px; margin: 0 auto; perspective: 800px; }
+      .envelope-body { position: absolute; inset: 28px 0 0; overflow: hidden; border: 1px solid #d4b2a6; border-radius: 12px; background: #e7c7c4; box-shadow: 0 12px 18px var(--shadow); }
+      .envelope-body::before, .envelope-body::after { content: ""; position: absolute; bottom: 0; width: 70%; height: 75%; background: #f3d8d5; }
+      .envelope-body::before { left: -25%; transform: skewX(33deg); transform-origin: bottom left; }
+      .envelope-body::after { right: -25%; transform: skewX(-33deg); transform-origin: bottom right; }
+      .envelope-flap { position: absolute; z-index: 2; top: 28px; left: 0; width: 100%; height: 112px; border: 1px solid #d4b2a6; border-radius: 12px 12px 8px 8px; background: #efceca; clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: 50% 50%; backface-visibility: hidden; transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+      .envelope-letter { position: absolute; z-index: 1; top: 54px; left: 8%; width: 84%; min-height: 165px; padding: 15px; border: 1px solid #ead8cf; background: var(--paper); box-shadow: 0 5px 10px rgba(74, 62, 61, 0.1); transform: translateY(0); transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+      .envelope-letter span { display: block; color: var(--wood); font-family: "Caveat", cursive; font-size: 1.2rem; }
+      .seal { position: absolute; z-index: 4; top: 101px; left: 50%; display: grid; width: 54px; height: 54px; place-items: center; border: 5px solid #bd756d; border-radius: 50%; background: #cb8179; color: var(--paper); font-family: "Caveat", cursive; font-size: 0.95rem; transform: translateX(-50%) rotate(-6deg); transition: transform 300ms ease-out, opacity 260ms ease-out; }
+      .envelope.is-open .envelope-flap { transform: rotateX(180deg); }
+      .envelope.is-open .envelope-letter { transform: translateY(-54px); }
+      .envelope.is-open .seal { opacity: 0; transform: translateX(-50%) scale(0.7) rotate(-10deg); }
+      .envelope-hint { margin: 5px 0 0; color: var(--wood); font-family: "Caveat", cursive; font-size: 1.35rem; }
+
+      .letter-modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 14px; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 220ms ease-out, visibility 220ms ease-out; }
+      .letter-modal.is-visible { opacity: 1; visibility: visible; pointer-events: auto; }
+      .letter-modal-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: rgba(74, 62, 61, 0.52); cursor: pointer; }
+      .letter-modal-dialog { position: relative; z-index: 1; display: flex; flex-direction: column; width: min(94vw, 980px); max-height: 90dvh; overflow: hidden; border: 1px solid #d8bbb5; border-radius: 10px; background: var(--paper); box-shadow: 0 18px 38px rgba(74, 62, 61, 0.26); transform: translateY(14px) scale(0.97); transition: transform 220ms ease-out; }
+      .letter-modal.is-visible .letter-modal-dialog { transform: translateY(0) scale(1); }
+      .letter-modal-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex: 0 0 auto; padding: 10px 14px 10px 18px; border-bottom: 1px solid var(--line); background: rgba(243, 232, 232, 0.76); }
+      .letter-modal-label { margin: 0; color: var(--wood); font-family: "Caveat", cursive; font-size: 1.28rem; }
+      .letter-close { min-width: 44px; min-height: 44px; padding: 8px 13px; border: 1px solid #c9aaa3; border-radius: 999px; background: var(--paper); color: #70534f; cursor: pointer; font-size: 0.88rem; box-shadow: 0 3px 0 #d8c2bb; transition: transform 180ms ease-out, box-shadow 180ms ease-out; }
+      .letter-close:hover { transform: translateY(-2px); }
+      .letter-close:active { transform: translateY(2px); box-shadow: none; }
+      .letter-sheet { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 14px 18px; }
+      .letter-paper { position: relative; width: min(100%, 900px); margin: 14px auto 0; padding: 28px 24px; border: 1px solid var(--line); background: var(--paper); box-shadow: 0 9px 17px var(--shadow); transform: rotate(0.6deg); }
+      .letter-paper::before { content: ""; position: absolute; top: 13px; right: 22px; width: 52px; height: 17px; background: rgba(237, 211, 210, 0.8); transform: rotate(5deg); }
+      .letter-paper h2 { margin: 0 0 14px; font-family: "Caveat", cursive; font-size: 2.1rem; font-weight: 600; color: #9b6f69; }
+      .letter-paper p { margin: 0 0 13px; color: #5d4b48; line-height: 1.9; }
+      .letter-signoff { margin-top: 20px; color: var(--wood); font-family: "Caveat", cursive; font-size: 1.4rem; text-align: right; }
+
+      .toast { position: fixed; z-index: 50; right: 16px; bottom: 18px; max-width: min(360px, calc(100% - 32px)); padding: 11px 14px; border: 1px solid #d8bbb5; border-radius: 8px; background: var(--paper); box-shadow: 0 9px 18px var(--shadow); color: var(--ink); opacity: 0; pointer-events: none; transform: translateY(12px); transition: opacity 180ms ease-out, transform 180ms ease-out; }
+      .toast.is-visible { opacity: 1; transform: translateY(0); }
+
+      .site-footer { margin-top: 42px; color: #8d7772; font-family: "Caveat", cursive; font-size: 1.05rem; text-align: center; }
+
+      @media (min-width: 760px) {
+        .page-wrap { padding-top: 42px; }
+        .photo-wall { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+        .polaroid:nth-child(2) { transform: rotate(2deg) translateY(17px); }
+        .polaroid:nth-child(3) { transform: rotate(1.5deg) translateY(-8px); }
+        .polaroid:nth-child(4) { transform: rotate(-2deg) translateY(12px); }
+        .video-layout { grid-template-columns: minmax(0, 1.2fr) minmax(250px, 0.8fr); }
+        .letter-paper { padding: 34px 42px; }
+      }
+
+      @media (max-width: 560px) {
+        .page-wrap { width: min(100% - 20px, 1120px); padding-top: 22px; }
+        .home-page { padding: 10px 4px 18px; }
+        .home-page::before { left: 0; opacity: 0.55; }
+        .home-page::after { right: -4px; bottom: 2px; width: 54px; height: 54px; }
+        .home-page .home-journal-index { gap: 7px; margin-bottom: 12px; font-size: 0.76rem; }
+        .home-journal-index .index-note { font-size: 0.68rem; }
+        .site-header { position: relative; align-items: flex-start; padding-right: 62px; }
+        .site-title { font-size: 2.2rem; }
+        .record-button { position: absolute; top: 0; right: 0; padding-right: 9px; }
+        .record-button span:last-child { display: none; }
+        .intro-note p { word-break: break-all; }
+        .home-intro { grid-template-columns: 1fr; gap: 12px; }
+        .home-intro-side { grid-template-columns: auto auto; align-items: center; justify-content: end; gap: 10px; }
+        .home-stamp { width: 62px; height: 62px; font-size: 0.72rem; }
+        .date-sticker { justify-self: end; }
+        .photo-wall { padding-top: 30px; }
+        .photo-wall::before { left: 5px; font-size: 0.78rem; }
+        .photo-wall::after { right: 4px; width: 42px; }
+        .memory-label { font-size: 0.74rem; }
+        .cake-card { grid-template-columns: 1fr; gap: 4px; padding-top: 22px; }
+        .wish-tag { top: 10px; right: 34px; font-size: 0.78rem; }
+        .cake-stage { width: 170px; margin: 0 auto; }
+        .cake-copy { text-align: center; }
+        .cake-copy .primary-button { width: 100%; }
+        .home-actions { margin-top: 23px; }
+        .letter-stage, .envelope-button, .envelope { width: 100%; min-width: 0; }
+        .letter-modal { padding: 12px; }
+        .letter-modal-dialog { width: calc(100vw - 24px); max-height: calc(100dvh - 24px); }
+        .letter-modal-header { padding-left: 14px; }
+        .letter-sheet { padding: 0 10px 14px; }
+        .letter-paper { padding: 23px 18px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+
+    <div class="page-wrap">
+      <header class="site-header">
+        <div>
+          <p class="eyebrow">一页小小的生日手帐</p>
+          <h1 class="site-title">给 <span id="recipientName">尤静雯</span></h1>
+        </div>
+        <button id="bgmToggle" class="record-button" type="button" aria-label="播放背景音乐" aria-pressed="false">
+          <span id="recordDisc" class="record-disc" aria-hidden="true">唱片</span>
+          <span id="bgmLabel">播放音乐</span>
+        </button>
+      </header>
+
+      <nav class="route-nav" aria-label="生日手帐页面导航">
+        <button class="route-button" type="button" data-route="home" aria-current="page">首页</button>
+        <button class="route-button" type="button" data-route="video">看视频</button>
+        <button class="route-button" type="button" data-route="letter">拆手写信</button>
+      </nav>
+
+      <main id="main">
+        <section id="view-home" class="view home-page" data-view="home" aria-labelledby="homeTitle">
+          <div class="home-journal-index" aria-hidden="true">
+            <span class="index-number">NO. 01</span>
+            <span class="index-rule"></span>
+            <span class="index-note">BIRTHDAY NOTES</span>
+          </div>
+          <div class="home-intro">
+            <div class="intro-note">
+              <span class="note-kicker">DEAR 尤静雯,</span>
+              <p id="homeTitle">今天只想把快乐都留给你。</p>
+              <p class="handwriting"></p>
+            </div>
+            <div class="home-intro-side">
+              <span class="home-stamp" aria-hidden="true">KEEP<br />THIS<br />DAY</span>
+              <span class="date-sticker">10.11</span>
+            </div>
+          </div>
+
+          <div class="photo-wall" aria-label="四张生日回忆照片">
+            <article class="polaroid">
+              <span class="tape top-left" aria-hidden="true"></span>
+              <div class="polaroid-media">
+                <img src="image1.jpg" data-fallback="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="第一次一起看海的照片" />
+                <span class="photo-placeholder">把第一张照片放在这里</span>
+              </div>
+              <span class="polaroid-caption">第一次一起看海</span>
+              <span class="memory-label">记录 01 · 海边</span>
+            </article>
+            <article class="polaroid">
+              <div class="polaroid-media">
+                <img src="image2.jpg" data-fallback="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="咖啡馆回忆照片" />
+                <span class="photo-placeholder">把第二张照片放在这里</span>
+              </div>
+              <span class="polaroid-caption">2023.12 咖啡馆</span>
+              <span class="memory-label">记录 02 · 下午</span>
+            </article>
+            <article class="polaroid">
+              <div class="polaroid-media">
+                <img class="photo-portrait" src="image3.jpg" data-fallback="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="最可爱的一张照片" />
+                <span class="photo-placeholder">把第三张照片放在这里</span>
+              </div>
+              <span class="polaroid-caption">最可爱的一张</span>
+              <span class="memory-label">记录 03 · 收藏</span>
+            </article>
+            <article class="polaroid">
+              <span class="tape top-right" aria-hidden="true"></span>
+              <div class="polaroid-media">
+                <img src="image4.jpg" data-fallback="https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="生日快乐照片" />
+                <span class="photo-placeholder">把第四张照片放在这里</span>
+              </div>
+              <span class="polaroid-caption">Happy Birthday!</span>
+              <span class="memory-label">记录 04 · 今天</span>
+            </article>
+          </div>
+
+          <div class="cake-card" id="cakeCard">
+            <span class="wish-tag" aria-hidden="true">WISH NOTE · 01</span>
+            <div class="cake-stage" aria-label="手绘生日蛋糕">
+              <div class="cake" aria-hidden="true">
+                <span class="cake-decoration left"></span>
+                <span class="cake-decoration center"></span>
+                <span class="cake-decoration right"></span>
+                <span class="cake-sprinkle one"></span>
+                <span class="cake-sprinkle two"></span>
+                <span class="cake-sprinkle three"></span>
+              </div>
+              <button class="candle-button" type="button" data-candle aria-label="点亮左边蜡烛">
+                <span class="flame" aria-hidden="true"></span>
+                <span class="candle-stick" aria-hidden="true"></span>
+              </button>
+              <button class="candle-button" type="button" data-candle aria-label="点亮右边蜡烛">
+                <span class="flame" aria-hidden="true"></span>
+                <span class="candle-stick" aria-hidden="true"></span>
+              </button>
+            </div>
+            <div class="cake-copy">
+              <h2>许个愿吧</h2>
+              <p>点一下蜡烛，让今天的愿望被好好听见。</p>
+              <button id="lightCandleButton" class="primary-button" type="button">点亮蜡烛</button>
+              <p id="wishMessage" class="wish-message" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <div class="home-actions">
+            <button class="secondary-button" type="button" data-route="video">看一小段视频</button>
+            <button class="secondary-button" type="button" data-route="letter">拆开手写信</button>
+          </div>
+        </section>
+
+        <section id="view-video" class="view" data-view="video" hidden aria-labelledby="videoTitle">
+          <button class="back-link" type="button" data-route="home">← 回到照片墙</button>
+          <div class="page-head">
+            <p class="section-kicker">留给你的这一小段时间</p>
+            <h2 id="videoTitle" class="section-heading">我们一起看过的那些片段</h2>
+            <p>把视频放进 <code>assets/birthday.mp4</code>，播放器会自动套上这台小电视的外壳。</p>
+          </div>
+          <div class="video-layout">
+            <div class="retro-tv">
+              <div class="tv-screen">
+                <video id="birthdayVideo" controls preload="metadata" poster="assets/photo-1.jpg" aria-label="生日祝福视频">
+                  <source src="assets/birthday.mp4" type="video/mp4" />
+                  你的浏览器暂时无法播放这段视频。
+                </video>
+              </div>
+              <div class="tv-controls"><span>PLAY / REWIND / KEEP THIS DAY</span><span class="tv-knobs" aria-hidden="true"><i></i><i></i></span></div>
+              <p id="videoFallback" class="media-note">把视频文件命名为 <code>assets/birthday.mp4</code> 后刷新页面即可播放。</p>
+            </div>
+            <div class="intro-note">
+              <p class="eyebrow">视频旁边的小纸条</p>
+              <p>“还记得 [某个具体瞬间] 吗？那天的风、你笑起来的样子，我都偷偷记住了。”</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-letter" class="view" data-view="letter" hidden aria-labelledby="letterTitle">
+          <button class="back-link" type="button" data-route="home">← 回到照片墙</button>
+          <div class="page-head">
+            <p class="section-kicker">写了很久，还是想亲口告诉你</p>
+            <h2 id="letterTitle" class="section-heading">拆开这封只写给你的信</h2>
+            <p>点击信封，慢慢把信抽出来。里面的话可以替换成你们之间最具体的回忆。</p>
+          </div>
+          <div class="letter-stage">
+            <button id="envelopeToggle" class="envelope-button" type="button" aria-expanded="false" aria-controls="letterModal" aria-label="打开手写信封">
+              <div id="envelope" class="envelope" aria-hidden="true">
+                <div class="envelope-letter"><span>亲爱的 [女生名字]：</span><span>有几句话想写给你……</span></div>
+                <div class="envelope-body"></div>
+                <div class="envelope-flap"></div>
+                <div class="seal">给你</div>
+              </div>
+              <p id="envelopeHint" class="envelope-hint">点这里拆信</p>
+            </button>
+
+            <div id="letterModal" class="letter-modal" hidden aria-hidden="true">
+              <button class="letter-modal-backdrop" type="button" data-letter-close aria-label="关闭信纸弹层"></button>
+              <section class="letter-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="letterModalTitle">
+                <header class="letter-modal-header">
+                  <p id="letterModalTitle" class="letter-modal-label">一封只写给你的信</p>
+                  <button id="letterCloseButton" class="letter-close" type="button" data-letter-close>收起信封</button>
+                </header>
+                <article id="letterSheet" class="letter-sheet">
+                  <div class="letter-paper">
+                    <h2>写给 [女生名字]</h2>
+                    <p>生日快乐呀。</p>
+                    <p>还记得我们在 [地点] 吃 [美食] 的那天吗？你说 [一句具体的话]，我到现在想起来还会笑。</p>
+                    <p>谢谢你一直把普通的日子过得很有意思。希望新的一岁，开心的时候有人分享，累的时候也有人接住你。今天先把所有烦恼放到一边，好好吃蛋糕，好好收下这份祝福。</p>
+                    <p>愿你一直做自己喜欢的事，也一直被温柔对待。</p>
+                    <p class="letter-signoff">写信给你的人<br />[你的名字]</p>
+                  </div>
+                </article>
+              </section>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <p class="site-footer">把想说的话贴在这里，等你亲自替换成我们的故事。</p>
+    </div>
+
+    <audio id="bgm" preload="auto" loop src="assets/bgm.mp3"></audio>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      const routes = ["home", "video", "letter"];
+      const views = new Map([...document.querySelectorAll("[data-view]")].map((view) => [view.dataset.view, view]));
+      const routeButtons = [...document.querySelectorAll("[data-route]")];
+      const bgm = document.getElementById("bgm");
+      const bgmToggle = document.getElementById("bgmToggle");
+      const bgmLabel = document.getElementById("bgmLabel");
+      const recordDisc = document.getElementById("recordDisc");
+      const toast = document.getElementById("toast");
+      const birthdayVideo = document.getElementById("birthdayVideo");
+      let bgmIntent = false;
+      let bgmMuted = false;
+      let bgmUserRequested = false;
+      let toastTimer;
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("is-visible");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 3500);
+      }
+
+      function currentRoute() {
+        const route = window.location.hash.replace("#", "");
+        return routes.includes(route) ? route : "home";
+      }
+
+      function renderRoute() {
+        const route = currentRoute();
+        views.forEach((view, key) => {
+          view.hidden = key !== route;
+          if (key === route) {
+            view.classList.remove("view");
+            window.requestAnimationFrame(() => view.classList.add("view"));
+          }
+        });
+        routeButtons.forEach((button) => {
+          if (!button.dataset.route) return;
+          if (button.dataset.route === route) button.setAttribute("aria-current", "page");
+          else button.removeAttribute("aria-current");
+        });
+        if (route !== "video" && !birthdayVideo.paused) birthdayVideo.pause();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function navigate(route) {
+        if (window.location.hash === `#${route}`) renderRoute();
+        else window.location.hash = route;
+      }
+
+      routeButtons.forEach((button) => button.addEventListener("click", () => navigate(button.dataset.route)));
+      window.addEventListener("hashchange", renderRoute);
+
+      function updateBgmUi() {
+        const playing = !bgm.paused && !bgmMuted;
+        bgmToggle.classList.toggle("is-playing", playing);
+        bgmToggle.setAttribute("aria-pressed", String(playing));
+        bgmToggle.setAttribute("aria-label", playing ? "暂停背景音乐" : "播放背景音乐");
+        bgmLabel.textContent = playing ? "暂停音乐" : "播放音乐";
+        recordDisc.textContent = playing ? "旋转" : "唱片";
+      }
+
+      async function tryPlayBgm() {
+        if (bgmMuted) return;
+        try {
+          await bgm.play();
+          bgmIntent = true;
+          updateBgmUi();
+        } catch (error) {
+          bgmIntent = true;
+          updateBgmUi();
+        }
+      }
+
+      bgmToggle.addEventListener("click", async () => {
+        bgmUserRequested = true;
+        if (!bgm.paused) {
+          bgmMuted = true;
+          bgm.pause();
+        } else {
+          bgmMuted = false;
+          await tryPlayBgm();
+        }
+        updateBgmUi();
+      });
+
+      document.addEventListener("pointerdown", () => {
+        if (!bgmIntent && !bgmMuted) tryPlayBgm();
+      }, { passive: true });
+      document.addEventListener("keydown", () => {
+        if (!bgmIntent && !bgmMuted) tryPlayBgm();
+      }, { passive: true });
+      bgm.addEventListener("play", updateBgmUi);
+      bgm.addEventListener("pause", updateBgmUi);
+      bgm.addEventListener("error", () => {
+        if (bgmUserRequested) showToast("把 bgm.mp3 放进 assets 文件夹，就可以播放你的背景音乐了。");
+      });
+      window.addEventListener("load", () => tryPlayBgm());
+
+      birthdayVideo.addEventListener("play", () => {
+        bgm.pause();
+        updateBgmUi();
+      });
+      ["pause", "ended"].forEach((eventName) => birthdayVideo.addEventListener(eventName, () => {
+        if (bgmIntent && !bgmMuted) tryPlayBgm();
+      }));
+      birthdayVideo.addEventListener("error", () => {
+        document.getElementById("videoFallback").hidden = false;
+      });
+      birthdayVideo.addEventListener("canplay", () => {
+        document.getElementById("videoFallback").hidden = true;
+      });
+
+      document.querySelectorAll("img[data-fallback]").forEach((image) => {
+        image.addEventListener("error", () => {
+          if (!image.dataset.fallbackTried) {
+            image.dataset.fallbackTried = "true";
+            image.src = image.dataset.fallback;
+            return;
+          }
+          const media = image.closest(".polaroid-media");
+          media.classList.add("is-missing");
+        });
+      });
+
+      const cakeCard = document.getElementById("cakeCard");
+      const wishMessage = document.getElementById("wishMessage");
+      const lightCandleButton = document.getElementById("lightCandleButton");
+      let candlesLit = false;
+
+      function lightCandles() {
+        if (candlesLit) return;
+        candlesLit = true;
+        cakeCard.classList.add("is-lit");
+        lightCandleButton.disabled = true;
+        lightCandleButton.textContent = "愿望亮起来了";
+        wishMessage.textContent = "希望你今天收到的每一份快乐，都刚好是你喜欢的。";
+        if (typeof window.confetti === "function") {
+          window.confetti({ particleCount: 86, spread: 62, startVelocity: 26, scalar: 0.85, colors: ["#e7c7c4", "#ead9a6", "#fffdf8"], origin: { x: 0.5, y: 0.72 } });
+        }
+      }
+
+      lightCandleButton.addEventListener("click", lightCandles);
+      document.querySelectorAll("[data-candle]").forEach((candle) => candle.addEventListener("click", lightCandles));
+
+      const envelopeToggle = document.getElementById("envelopeToggle");
+      const envelope = document.getElementById("envelope");
+      const letterModal = document.getElementById("letterModal");
+      const letterSheet = document.getElementById("letterSheet");
+      const letterCloseButton = document.getElementById("letterCloseButton");
+      const envelopeHint = document.getElementById("envelopeHint");
+      let letterOpen = false;
+      let letterModalOpenTimer;
+      let letterModalHideTimer;
+
+      function setLetterOpen(open) {
+        letterOpen = open;
+        envelope.classList.toggle("is-open", open);
+        envelopeToggle.setAttribute("aria-expanded", String(open));
+        envelopeToggle.setAttribute("aria-label", open ? "信封正在打开" : "打开手写信封");
+        envelopeHint.textContent = open ? "信封打开中" : "点这里拆信";
+        if (open) {
+          window.clearTimeout(letterModalOpenTimer);
+          letterModalOpenTimer = window.setTimeout(openLetterModal, 420);
+        } else {
+          closeLetterModal({ restoreFocus: false });
+        }
+      }
+
+      function openLetterModal() {
+        if (!letterOpen) return;
+        window.clearTimeout(letterModalHideTimer);
+        letterSheet.scrollTop = 0;
+        letterModal.hidden = false;
+        letterModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        window.requestAnimationFrame(() => letterModal.classList.add("is-visible"));
+        window.setTimeout(() => letterCloseButton.focus({ preventScroll: true }), 40);
+      }
+
+      function closeLetterModal({ restoreFocus = true } = {}) {
+        window.clearTimeout(letterModalOpenTimer);
+        window.clearTimeout(letterModalHideTimer);
+        letterOpen = false;
+        envelope.classList.remove("is-open");
+        envelopeToggle.setAttribute("aria-expanded", "false");
+        envelopeToggle.setAttribute("aria-label", "打开手写信封");
+        envelopeHint.textContent = "点这里拆信";
+        letterModal.classList.remove("is-visible");
+        letterModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+        letterSheet.scrollTop = 0;
+        letterModalHideTimer = window.setTimeout(() => {
+          letterModal.hidden = true;
+          if (restoreFocus && currentRoute() === "letter") envelopeToggle.focus({ preventScroll: true });
+        }, 240);
+      }
+
+      function handleLetterModalKeydown(event) {
+        if (!letterModal.classList.contains("is-visible")) return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeLetterModal();
+          return;
+        }
+        if (event.key !== "Tab") return;
+        const focusable = [letterCloseButton];
+        const currentIndex = focusable.indexOf(document.activeElement);
+        if (event.shiftKey && (currentIndex <= 0 || currentIndex === -1)) {
+          event.preventDefault();
+          focusable[focusable.length - 1].focus();
+        } else if (!event.shiftKey && currentIndex === focusable.length - 1) {
+          event.preventDefault();
+          focusable[0].focus();
+        }
+      }
+
+      envelopeToggle.addEventListener("click", () => {
+        if (!letterOpen) setLetterOpen(true);
+      });
+      document.querySelectorAll("[data-letter-close]").forEach((element) => element.addEventListener("click", closeLetterModal));
+      document.addEventListener("keydown", handleLetterModalKeydown);
+
+      renderRoute();
+      window.addEventListener("hashchange", () => {
+        if (currentRoute() !== "letter" && !letterModal.hidden) closeLetterModal({ restoreFocus: false });
+      });
+    </script>
+  </body>
+</html>
