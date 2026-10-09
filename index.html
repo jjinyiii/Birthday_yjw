@@ -506,11 +506,14 @@
       .letter-close:hover { transform: translateY(-2px); }
       .letter-close:active { transform: translateY(2px); box-shadow: none; }
       .letter-sheet { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 14px 18px; }
-      .letter-paper { position: relative; width: min(100%, 900px); margin: 14px auto 0; padding: 28px 24px; border: 1px solid var(--line); background: var(--paper); box-shadow: 0 9px 17px var(--shadow); transform: rotate(0.6deg); }
+      .letter-paper { position: relative; width: min(100%, 900px); margin: 14px auto 0; padding: 34px 30px 38px; border: 1px solid var(--line); background: var(--paper); box-shadow: 0 9px 17px var(--shadow); transform: rotate(0.6deg); }
       .letter-paper::before { content: ""; position: absolute; top: 13px; right: 22px; width: 52px; height: 17px; background: rgba(237, 211, 210, 0.8); transform: rotate(5deg); }
-      .letter-paper h2 { margin: 0 0 14px; font-family: "Caveat", cursive; font-size: 2.1rem; font-weight: 600; color: #9b6f69; }
-      .letter-paper p { margin: 0 0 13px; color: #5d4b48; line-height: 1.9; }
-      .letter-signoff { margin-top: 20px; color: var(--wood); font-family: "Caveat", cursive; font-size: 1.4rem; text-align: right; }
+      .letter-paper::after { content: "19"; position: absolute; top: 20px; right: 88px; display: grid; width: 38px; height: 38px; place-items: center; border: 1px dashed #c99e96; border-radius: 50%; color: var(--rose); font-family: "Caveat", cursive; font-size: 1.05rem; transform: rotate(-9deg); }
+      .letter-paper h2 { margin: 0 0 3px; padding-left: 0; font-family: "Caveat", cursive; font-size: 2.25rem; font-weight: 600; color: #9b6f69; }
+      .letter-paper p { margin: 0 0 18px; color: #5d4b48; line-height: 2; letter-spacing: 0.01em; }
+      .letter-paper .letter-opening { margin-bottom: 21px; color: #70534f; font-family: "Caveat", cursive; font-size: 1.35rem; }
+      .letter-paper .letter-quote { margin: 25px 4px 21px; padding: 14px 18px 12px; border-left: 3px solid #d5aaa2; background: rgba(243, 232, 232, 0.58); color: #765952; font-family: "Caveat", cursive; font-size: 1.3rem; line-height: 1.65; }
+      .letter-signoff { margin-top: 26px; color: var(--wood); font-family: "Caveat", cursive; font-size: 1.45rem; line-height: 1.5; text-align: right; }
 
       .toast { position: fixed; z-index: 50; right: 16px; bottom: 18px; max-width: min(360px, calc(100% - 32px)); padding: 11px 14px; border: 1px solid #d8bbb5; border-radius: 8px; background: var(--paper); box-shadow: 0 9px 18px var(--shadow); color: var(--ink); opacity: 0; pointer-events: none; transform: translateY(12px); transition: opacity 180ms ease-out, transform 180ms ease-out; }
       .toast.is-visible { opacity: 1; transform: translateY(0); }
@@ -524,7 +527,7 @@
         .polaroid:nth-child(3) { transform: rotate(1.5deg) translateY(-8px); }
         .polaroid:nth-child(4) { transform: rotate(-2deg) translateY(12px); }
         .video-layout { grid-template-columns: minmax(0, 1.2fr) minmax(250px, 0.8fr); }
-        .letter-paper { padding: 34px 42px; }
+        .letter-paper { padding: 38px 48px 44px; }
       }
 
       @media (max-width: 560px) {
@@ -558,7 +561,11 @@
         .letter-modal-dialog { width: calc(100vw - 24px); max-height: calc(100dvh - 24px); }
         .letter-modal-header { padding-left: 14px; }
         .letter-sheet { padding: 0 10px 14px; }
-        .letter-paper { padding: 23px 18px; }
+        .letter-paper { padding: 29px 18px 32px; }
+        .letter-paper::after { right: 70px; }
+        .letter-paper h2 { padding-left: 0; font-size: 2rem; }
+        .letter-paper p { line-height: 1.9; }
+        .letter-paper .letter-quote { margin-right: 0; margin-left: 0; padding-right: 13px; padding-left: 14px; }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -596,8 +603,8 @@
           </div>
           <div class="home-intro">
             <div class="intro-note">
-              <span class="note-kicker">DEAR 尤静雯,</span>
-              <p id="homeTitle">今天只想把快乐都留给你。</p>
+              <span class="note-kicker">To 尤静雯,</span>
+              <p id="homeTitle">大寿星天天开心好吧</p>
               <p class="handwriting"></p>
             </div>
             <div class="home-intro-side">
@@ -613,24 +620,24 @@
                 <img src="image1.jpg" data-fallback="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="第一次一起看海的照片" />
                 <span class="photo-placeholder">把第一张照片放在这里</span>
               </div>
-              <span class="polaroid-caption">第一次一起看海</span>
-              <span class="memory-label">记录 01 · 海边</span>
+              <span class="polaroid-caption">初识(7.25)</span>
+              <span class="memory-label">记录 01</span>
             </article>
             <article class="polaroid">
               <div class="polaroid-media">
                 <img src="image2.jpg" data-fallback="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="咖啡馆回忆照片" />
                 <span class="photo-placeholder">把第二张照片放在这里</span>
               </div>
-              <span class="polaroid-caption">2023.12 咖啡馆</span>
-              <span class="memory-label">记录 02 · 下午</span>
+              <span class="polaroid-caption">偷拍一手军爷</span>
+              <span class="memory-label">记录 02 </span>
             </article>
             <article class="polaroid">
               <div class="polaroid-media">
                 <img src="image3.jpg" data-fallback="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="最可爱的一张照片" />
                 <span class="photo-placeholder">把第三张照片放在这里</span>
               </div>
-              <span class="polaroid-caption">最可爱的一张</span>
-              <span class="memory-label">记录 03 · 收藏</span>
+              <span class="polaroid-caption">第一张合照</span>
+              <span class="memory-label">记录 03 </span>
             </article>
             <article class="polaroid">
               <span class="tape top-right" aria-hidden="true"></span>
@@ -638,8 +645,8 @@
                 <img src="image4.jpg" data-fallback="https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="生日快乐照片" />
                 <span class="photo-placeholder">把第四张照片放在这里</span>
               </div>
-              <span class="polaroid-caption">Happy Birthday!</span>
-              <span class="memory-label">记录 04 · 今天</span>
+              <span class="polaroid-caption">真的很呆吗，感觉还挺有氛围的</span>
+              <span class="memory-label">记录 04 </span>
             </article>
           </div>
 
@@ -672,47 +679,34 @@
           </div>
 
           <div class="home-actions">
-            <button class="secondary-button" type="button" data-route="video">看一小段视频</button>
-            <button class="secondary-button" type="button" data-route="letter">拆开手写信</button>
+            <button class="secondary-button" type="button" data-route="video">来段小惊喜</button>
+            <button class="secondary-button" type="button" data-route="letter">看看信呢</button>
           </div>
         </section>
 
         <section id="view-video" class="view" data-view="video" hidden aria-labelledby="videoTitle">
           <button class="back-link" type="button" data-route="home">← 回到照片墙</button>
-          <div class="page-head">
-            <p class="section-kicker">留给你的这一小段时间</p>
-            <h2 id="videoTitle" class="section-heading">我们一起看过的那些片段</h2>
-            <p>把视频放进 <code>assets/birthday.mp4</code>，播放器会自动套上这台小电视的外壳。</p>
-          </div>
           <div class="video-layout">
             <div class="retro-tv">
               <div class="tv-screen">
                 <video id="birthdayVideo" controls preload="metadata" poster="assets/photo-1.jpg" aria-label="生日祝福视频">
-                  <source src="assets/birthday.mp4" type="video/mp4" />
-                  你的浏览器暂时无法播放这段视频。
+                  <source src="superise.mp4" type="video/mp4" />
                 </video>
               </div>
-              <div class="tv-controls"><span>PLAY / REWIND / KEEP THIS DAY</span><span class="tv-knobs" aria-hidden="true"><i></i><i></i></span></div>
-              <p id="videoFallback" class="media-note">把视频文件命名为 <code>assets/birthday.mp4</code> 后刷新页面即可播放。</p>
-            </div>
-            <div class="intro-note">
-              <p class="eyebrow">视频旁边的小纸条</p>
-              <p>“还记得 [某个具体瞬间] 吗？那天的风、你笑起来的样子，我都偷偷记住了。”</p>
+              <div class="tv-controls">
+                <span id="videoTitle">你就欣赏吧，别太感动了</span>
+                <span class="tv-knobs" aria-hidden="true"><i></i><i></i></span>
+              </div>
             </div>
           </div>
         </section>
 
-        <section id="view-letter" class="view" data-view="letter" hidden aria-labelledby="letterTitle">
+        <section id="view-letter" class="view" data-view="letter" hidden aria-label="手写信件页面">
           <button class="back-link" type="button" data-route="home">← 回到照片墙</button>
-          <div class="page-head">
-            <p class="section-kicker">写了很久，还是想亲口告诉你</p>
-            <h2 id="letterTitle" class="section-heading">拆开这封只写给你的信</h2>
-            <p>点击信封，慢慢把信抽出来。里面的话可以替换成你们之间最具体的回忆。</p>
-          </div>
           <div class="letter-stage">
             <button id="envelopeToggle" class="envelope-button" type="button" aria-expanded="false" aria-controls="letterModal" aria-label="打开手写信封">
               <div id="envelope" class="envelope" aria-hidden="true">
-                <div class="envelope-letter"><span>亲爱的 [女生名字]：</span><span>有几句话想写给你……</span></div>
+                <div class="envelope-letter"><span></span><span></span></div>
                 <div class="envelope-body"></div>
                 <div class="envelope-flap"></div>
                 <div class="seal">给你</div>
@@ -722,19 +716,20 @@
 
             <div id="letterModal" class="letter-modal" hidden aria-hidden="true">
               <button class="letter-modal-backdrop" type="button" data-letter-close aria-label="关闭信纸弹层"></button>
-              <section class="letter-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="letterModalTitle">
+              <section class="letter-modal-dialog" role="dialog" aria-modal="true" aria-label="手写信纸">
                 <header class="letter-modal-header">
-                  <p id="letterModalTitle" class="letter-modal-label">一封只写给你的信</p>
                   <button id="letterCloseButton" class="letter-close" type="button" data-letter-close>收起信封</button>
                 </header>
                 <article id="letterSheet" class="letter-sheet">
                   <div class="letter-paper">
-                    <h2>写给 [女生名字]</h2>
-                    <p>生日快乐呀。</p>
-                    <p>还记得我们在 [地点] 吃 [美食] 的那天吗？你说 [一句具体的话]，我到现在想起来还会笑。</p>
-                    <p>谢谢你一直把普通的日子过得很有意思。希望新的一岁，开心的时候有人分享，累的时候也有人接住你。今天先把所有烦恼放到一边，好好吃蛋糕，好好收下这份祝福。</p>
-                    <p>愿你一直做自己喜欢的事，也一直被温柔对待。</p>
-                    <p class="letter-signoff">写信给你的人<br />[你的名字]</p>
+                    <h2>To 静雯</h2>
+                    <p class="letter-opening">首先当然是祝贺我们静雯同学十九岁马上奔二了好吧。</p>
+                    <p>还记得我们刚认识的时候，你说你社恐，但是又想交朋友，我还怕你身边没啥朋友。还好后面发现你人缘还挺好的，虽然可能眼光有点小问题（doge）。挺多人都说我抽象，其实我也能从你字里行间感受到你的抽象天赋（突然有点想笑），多释放释放就会发现社恐属性会少很多了，别问我怎么知道的。</p>
+                    <p>还有，总是听到你怕自己不够好，觉得不如周边的人。我想说的是不要妄自菲薄。虽然咱俩才认识两个多月（这么一看居然才两个月吗，怎么感觉已经过了好久了），但是我能感受到你已经很棒了，自身有实力，也有上进的心，已经超越 90% 的同龄人了好吧，虽然可能大概我是会在那 10% 里面的吧（开玩笑）。自信一点，能有这样的心态做什么都会成功的好吧，所以不要觉得自己不好，你不比任何人差。</p>
+                    <p>当然我也知道确实有时候会不自觉地焦虑，这时候可以试试少想多做，想得少一点，做得多一点。或者也可以找个信任的人聊聊天，倾诉一下，嗯反正我难受的时候是这样，或者喝点小酒之类的（但是感觉容易会有点小瘾）。就在学校里随便找个风景好的地方，一边小酌一边欣赏风景，很有感觉好吧。当然也可以选择小哭一会，把压抑的情绪释放一下，其实也挺好的。</p>
+                    <p class="letter-quote">“方向盘回正后，左转向灯会自动关闭。当我们步入正轨的时候，会发现有些人的离开也并无影响。后视镜偶尔看看，但不能离开前方视线超过两秒。”<br />我的意思是：我们可以回头看，但只能往前走。</p>
+                    <p>最后，生日快乐好吧，也可以期待一手大学生活，虽然其实好像也没啥好期待的。但是也可以给自己留点期待，比较有动力。</p>
+                    <p class="letter-signoff">ps：不要太感动了，不要迷恋哥，哥只是传说（）</p>
                   </div>
                 </article>
               </section>
@@ -743,7 +738,7 @@
         </section>
       </main>
 
-      <p class="site-footer">把想说的话贴在这里，等你亲自替换成我们的故事。</p>
+      <p class="site-footer">。</p>
     </div>
 
     <audio id="bgm" preload="auto" loop src="assets/bgm.mp3"></audio>
@@ -758,6 +753,7 @@
       const bgmLabel = document.getElementById("bgmLabel");
       const recordDisc = document.getElementById("recordDisc");
       const toast = document.getElementById("toast");
+      const siteFooter = document.querySelector(".site-footer");
       const birthdayVideo = document.getElementById("birthdayVideo");
       let bgmIntent = false;
       let bgmMuted = false;
@@ -778,6 +774,7 @@
 
       function renderRoute() {
         const route = currentRoute();
+        siteFooter.hidden = route !== "home";
         views.forEach((view, key) => {
           view.hidden = key !== route;
           if (key === route) {
@@ -855,13 +852,6 @@
       ["pause", "ended"].forEach((eventName) => birthdayVideo.addEventListener(eventName, () => {
         if (bgmIntent && !bgmMuted) tryPlayBgm();
       }));
-      birthdayVideo.addEventListener("error", () => {
-        document.getElementById("videoFallback").hidden = false;
-      });
-      birthdayVideo.addEventListener("canplay", () => {
-        document.getElementById("videoFallback").hidden = true;
-      });
-
       document.querySelectorAll("img[data-fallback]").forEach((image) => {
         image.addEventListener("error", () => {
           if (!image.dataset.fallbackTried) {
@@ -977,5 +967,5 @@
         if (currentRoute() !== "letter" && !letterModal.hidden) closeLetterModal({ restoreFocus: false });
       });
     </script>
-  </body>
+</body>
 </html>
