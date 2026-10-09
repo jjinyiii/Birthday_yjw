@@ -92,38 +92,43 @@
       }
 
       .record-button {
+        position: relative;
         display: inline-flex;
         align-items: center;
-        gap: 9px;
-        min-height: 48px;
-        padding: 7px 12px 7px 8px;
+        gap: 10px;
+        min-height: 54px;
+        padding: 8px 13px 8px 8px;
         border: 1px solid #d8bbb5;
-        border-radius: 7px;
-        background: var(--pink);
-        color: var(--wood);
+        border-radius: 4px 7px 5px 6px;
+        background: #ead9a6;
+        color: #5f4944;
         box-shadow: 0 5px 12px var(--shadow);
         cursor: pointer;
-        font-size: 0.82rem;
+        transform: rotate(1deg);
         transition: transform 180ms ease-out, box-shadow 180ms ease-out;
       }
 
+      .record-button::before { content: ""; position: absolute; top: -7px; left: 40px; width: 42px; height: 12px; background: rgba(216, 183, 167, 0.72); box-shadow: 0 2px 5px rgba(74, 62, 61, 0.08); transform: rotate(-5deg); pointer-events: none; }
       .record-button:hover { transform: translateY(-2px) rotate(1deg); box-shadow: 0 8px 16px var(--shadow); }
-      .record-button:active { transform: translateY(0); }
+      .record-button:active { transform: translateY(0) rotate(1deg); }
 
       .record-disc {
-        display: grid;
-        width: 32px;
-        height: 32px;
-        place-items: center;
-        border: 1px solid #b98d84;
+        position: relative;
+        display: block;
+        flex: 0 0 auto;
+        width: 38px;
+        height: 38px;
+        border: 1px solid #513d3a;
         border-radius: 50%;
-        background: #ead9a6;
-        color: var(--wood);
-        font-family: "Caveat", cursive;
-        font-size: 0.85rem;
+        background: radial-gradient(circle, #f1d9a8 0 13%, #8d6e69 14% 17%, #513d3a 18% 21%, #80615b 22% 24%, #4a3936 25% 31%, #795b55 32% 35%, #493633 36% 41%, #7b5d56 42% 45%, #493633 46% 100%);
+        box-shadow: 0 2px 4px rgba(74, 62, 61, 0.2);
       }
 
-      .record-button.is-playing .record-disc { animation: record-spin 4s linear infinite; }
+      .record-disc::after { content: ""; position: absolute; top: 50%; left: 50%; width: 3px; height: 3px; border-radius: 50%; background: #fff3d8; transform: translate(-50%, -50%); }
+      .record-info { display: grid; gap: 2px; min-width: 0; text-align: left; line-height: 1.2; }
+      .record-title { color: #5c4641; font-size: 0.78rem; font-weight: 600; white-space: nowrap; }
+      .record-state { color: var(--wood); font-size: 0.7rem; white-space: nowrap; }
+      .record-button.is-playing .record-disc { animation: record-spin 5.5s linear infinite; }
 
       @keyframes record-spin { to { transform: rotate(360deg); } }
 
@@ -537,10 +542,13 @@
         .home-page::after { right: -4px; bottom: 2px; width: 54px; height: 54px; }
         .home-page .home-journal-index { gap: 7px; margin-bottom: 12px; font-size: 0.76rem; }
         .home-journal-index .index-note { font-size: 0.68rem; }
-        .site-header { position: relative; align-items: flex-start; padding-right: 62px; }
+        .site-header { position: relative; align-items: flex-start; padding-right: clamp(142px, 42vw, 164px); }
+        .site-header .eyebrow { font-size: 0.82rem; white-space: nowrap; }
         .site-title { font-size: 2.2rem; }
-        .record-button { position: absolute; top: 0; right: 0; padding-right: 9px; }
-        .record-button span:last-child { display: none; }
+        .record-button { position: absolute; top: 2px; right: 0; width: clamp(138px, 38vw, 152px); min-height: 48px; gap: 7px; padding: 6px 8px 6px 6px; }
+        .record-disc { width: 34px; height: 34px; }
+        .record-title { font-size: 0.71rem; }
+        .record-state { font-size: 0.65rem; }
         .intro-note p { word-break: break-all; }
         .home-intro { grid-template-columns: 1fr; gap: 12px; }
         .home-intro-side { grid-template-columns: auto auto; align-items: center; justify-content: end; gap: 10px; }
@@ -570,6 +578,7 @@
 
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        .record-button.is-playing .record-disc { animation: none; }
       }
     </style>
   </head>
@@ -582,9 +591,12 @@
           <p class="eyebrow">一页小小的生日手帐</p>
           <h1 class="site-title">给 <span id="recipientName">尤静雯</span></h1>
         </div>
-        <button id="bgmToggle" class="record-button" type="button" aria-label="播放背景音乐" aria-pressed="false">
-          <span id="recordDisc" class="record-disc" aria-hidden="true">唱片</span>
-          <span id="bgmLabel">播放音乐</span>
+        <button id="bgmToggle" class="record-button" type="button" aria-label="播放《等你下课》" aria-pressed="false">
+          <span id="recordDisc" class="record-disc" aria-hidden="true"></span>
+          <span class="record-info">
+            <span class="record-title">《等你下课》</span>
+            <span id="bgmLabel" class="record-state">点击播放</span>
+          </span>
         </button>
       </header>
 
@@ -741,7 +753,7 @@
       <p class="site-footer">。</p>
     </div>
 
-    <audio id="bgm" preload="auto" loop src="assets/bgm.mp3"></audio>
+    <audio id="bgm" preload="auto" autoplay loop src="music.mp3"></audio>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script>
@@ -751,7 +763,6 @@
       const bgm = document.getElementById("bgm");
       const bgmToggle = document.getElementById("bgmToggle");
       const bgmLabel = document.getElementById("bgmLabel");
-      const recordDisc = document.getElementById("recordDisc");
       const toast = document.getElementById("toast");
       const siteFooter = document.querySelector(".site-footer");
       const birthdayVideo = document.getElementById("birthdayVideo");
@@ -803,9 +814,8 @@
         const playing = !bgm.paused && !bgmMuted;
         bgmToggle.classList.toggle("is-playing", playing);
         bgmToggle.setAttribute("aria-pressed", String(playing));
-        bgmToggle.setAttribute("aria-label", playing ? "暂停背景音乐" : "播放背景音乐");
-        bgmLabel.textContent = playing ? "暂停音乐" : "播放音乐";
-        recordDisc.textContent = playing ? "旋转" : "唱片";
+        bgmToggle.setAttribute("aria-label", playing ? "暂停《等你下课》" : "播放《等你下课》");
+        bgmLabel.textContent = playing ? "正在播放" : "点击播放";
       }
 
       async function tryPlayBgm() {
@@ -815,7 +825,6 @@
           bgmIntent = true;
           updateBgmUi();
         } catch (error) {
-          bgmIntent = true;
           updateBgmUi();
         }
       }
@@ -832,19 +841,17 @@
         updateBgmUi();
       });
 
-      document.addEventListener("pointerdown", () => {
+      function activateBgmFromPage(event) {
+        if (event.target instanceof Element && event.target.closest("#bgmToggle")) return;
         if (!bgmIntent && !bgmMuted) tryPlayBgm();
-      }, { passive: true });
-      document.addEventListener("keydown", () => {
-        if (!bgmIntent && !bgmMuted) tryPlayBgm();
-      }, { passive: true });
+      }
+      document.addEventListener("pointerdown", activateBgmFromPage, { passive: true });
+      document.addEventListener("keydown", activateBgmFromPage, { passive: true });
       bgm.addEventListener("play", updateBgmUi);
       bgm.addEventListener("pause", updateBgmUi);
       bgm.addEventListener("error", () => {
-        if (bgmUserRequested) showToast("把 bgm.mp3 放进 assets 文件夹，就可以播放你的背景音乐了。");
+        if (bgmUserRequested) showToast("请确认 music.mp3 位于页面文件夹中。");
       });
-      window.addEventListener("load", () => tryPlayBgm());
-
       birthdayVideo.addEventListener("play", () => {
         bgm.pause();
         updateBgmUi();
@@ -962,6 +969,7 @@
       document.querySelectorAll("[data-letter-close]").forEach((element) => element.addEventListener("click", closeLetterModal));
       document.addEventListener("keydown", handleLetterModalKeydown);
 
+      tryPlayBgm();
       renderRoute();
       window.addEventListener("hashchange", () => {
         if (currentRoute() !== "letter" && !letterModal.hidden) closeLetterModal({ restoreFocus: false });
