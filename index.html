@@ -165,9 +165,13 @@
         to { opacity: 1; }
       }
 
+      .ticket-page { position: relative; }
+
       .home-page { position: relative; isolation: isolate; padding: 14px 22px 24px; }
       .home-page::before { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; left: 6px; border-left: 1px dashed rgba(185, 119, 112, 0.3); pointer-events: none; }
       .home-page::after { content: ""; position: absolute; z-index: -1; right: 8px; bottom: 8px; width: 70px; height: 70px; border: 1px dashed rgba(185, 119, 112, 0.35); border-radius: 50%; opacity: 0.65; transform: rotate(12deg); pointer-events: none; }
+      .ticket-home .photo-wall { border: 1px dashed #d6bdb4; border-radius: 3px; background: rgba(255, 253, 248, 0.4); }
+      .ticket-home .cake-card { border-style: dashed; }
 
       .home-journal-index { display: flex; align-items: center; gap: 10px; margin: 0 0 15px; color: #a47d75; font-family: "Caveat", cursive; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; }
       .home-journal-index .index-number { color: var(--rose); font-weight: 700; }
@@ -466,6 +470,25 @@
 
       .video-layout { display: grid; gap: 22px; align-items: start; }
 
+      .ticket-video .video-layout { grid-template-columns: minmax(0, 780px); justify-content: center; }
+
+      .cinema-ticket {
+        position: relative;
+        width: 100%;
+        padding: 18px 24px;
+        border: 1px dashed #c99e96;
+        border-radius: 8px;
+        background-color: #f5ece4;
+        background-image: radial-gradient(circle at 0 50%, var(--cream) 0 8px, transparent 8.5px), radial-gradient(circle at 100% 50%, var(--cream) 0 8px, transparent 8.5px);
+        box-shadow: 0 8px 18px var(--shadow);
+      }
+
+      .cinema-ticket::before, .cinema-ticket::after { content: ""; position: absolute; top: 50%; width: 8px; height: 76px; background: radial-gradient(circle, #bd9b8e 1px, transparent 1.6px) 0 0 / 8px 9px repeat-y; transform: translateY(-50%); pointer-events: none; }
+      .cinema-ticket::before { left: 8px; }
+      .cinema-ticket::after { right: 8px; }
+
+      .ticket-video .retro-tv { border-radius: 8px 8px 14px 14px; }
+
       .retro-tv {
         position: relative;
         padding: 15px 16px 20px;
@@ -483,6 +506,11 @@
       .media-note { margin: 11px 0 0; color: #705d59; font-size: 0.88rem; }
 
       .letter-stage { display: grid; gap: 18px; justify-items: center; width: 100%; min-width: 0; }
+
+      .ticket-letter .letter-stage { position: relative; width: min(100%, 720px); min-height: 372px; margin: 0 auto; padding: 58px 12px 54px; border: 1px dashed #c99e96; background: rgba(255, 253, 248, 0.55); box-shadow: 0 8px 18px var(--shadow); }
+
+      .mail-stamp { position: absolute; top: 10px; right: 11%; display: grid; width: 48px; height: 48px; place-items: center; border: 1px dashed #b98d84; border-radius: 50%; color: var(--rose); font-family: "Caveat", cursive; font-size: 0.78rem; line-height: 1; text-align: center; transform: rotate(8deg); }
+      .mail-ticket { position: absolute; bottom: 12px; left: 9%; padding: 4px 9px 2px; border: 1px dashed #c99e96; background: var(--paper); color: var(--wood); font-family: "Caveat", cursive; font-size: 0.88rem; line-height: 1.1; transform: rotate(-2deg); }
 
       .envelope-button { position: relative; width: min(100%, 510px); min-height: 260px; padding: 26px 20px 22px; border: 0; background: transparent; cursor: pointer; }
 
@@ -565,6 +593,12 @@
         .cake-copy .primary-button { width: 100%; }
         .home-actions { margin-top: 23px; }
         .letter-stage, .envelope-button, .envelope { width: 100%; min-width: 0; }
+        .ticket-letter .letter-stage { min-height: 372px; padding: 58px 6px 54px; }
+        .mail-stamp { right: 8%; }
+        .mail-ticket { left: 5%; }
+        .cinema-ticket { padding: 12px 12px; }
+        .cinema-ticket::before { left: 4px; }
+        .cinema-ticket::after { right: 4px; }
         .letter-modal { padding: 12px; }
         .letter-modal-dialog { width: calc(100vw - 24px); max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); }
         .letter-modal-header { padding-left: 14px; }
@@ -607,7 +641,7 @@
       </nav>
 
       <main id="main">
-        <section id="view-home" class="view home-page" data-view="home" aria-labelledby="homeTitle">
+        <section id="view-home" class="view home-page ticket-page ticket-home" data-view="home" aria-labelledby="homeTitle">
           <div class="home-journal-index" aria-hidden="true">
             <span class="index-number">NO. 01</span>
             <span class="index-rule"></span>
@@ -696,26 +730,30 @@
           </div>
         </section>
 
-        <section id="view-video" class="view" data-view="video" hidden aria-labelledby="videoTitle">
+        <section id="view-video" class="view ticket-page ticket-video" data-view="video" hidden aria-labelledby="videoTitle">
           <button class="back-link" type="button" data-route="home">← 回到照片墙</button>
           <div class="video-layout">
-            <div class="retro-tv">
-              <div class="tv-screen">
-                <video id="birthdayVideo" controls preload="metadata" poster="assets/photo-1.jpg" aria-label="生日祝福视频">
-                  <source src="superise.mp4" type="video/mp4" />
-                </video>
-              </div>
-              <div class="tv-controls">
-                <span id="videoTitle">你就欣赏吧，别太感动了</span>
-                <span class="tv-knobs" aria-hidden="true"><i></i><i></i></span>
+            <div class="cinema-ticket">
+              <div class="retro-tv">
+                <div class="tv-screen">
+                  <video id="birthdayVideo" controls preload="metadata" poster="assets/photo-1.jpg" aria-label="生日祝福视频">
+                    <source src="superise.mp4" type="video/mp4" />
+                  </video>
+                </div>
+                <div class="tv-controls">
+                  <span id="videoTitle">你就欣赏吧，别太感动了</span>
+                  <span class="tv-knobs" aria-hidden="true"><i></i><i></i></span>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section id="view-letter" class="view" data-view="letter" hidden aria-label="手写信件页面">
+        <section id="view-letter" class="view ticket-page ticket-letter" data-view="letter" hidden aria-label="手写信件页面">
           <button class="back-link" type="button" data-route="home">← 回到照片墙</button>
           <div class="letter-stage">
+            <span class="mail-stamp" aria-hidden="true">POST<br />19</span>
+            <span class="mail-ticket" aria-hidden="true">LETTER 03 / FOR YOU</span>
             <button id="envelopeToggle" class="envelope-button" type="button" aria-expanded="false" aria-controls="letterModal" aria-label="打开手写信封">
               <div id="envelope" class="envelope" aria-hidden="true">
                 <div class="envelope-letter"><span></span><span></span></div>
