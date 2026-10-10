@@ -470,12 +470,22 @@
 
       .video-layout { display: grid; gap: 22px; align-items: start; }
 
-      .ticket-video .video-layout { grid-template-columns: minmax(0, 780px); justify-content: center; }
+      .ticket-video { padding-bottom: 18px; }
+      .ticket-video .video-layout { grid-template-columns: minmax(0, 900px); justify-content: center; }
+      .ticket-video .video-layout::before,
+      .ticket-video .video-layout::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        pointer-events: none;
+      }
+      .ticket-video .video-layout::before { inset: 42px 4% 5px; border-top: 1px dashed rgba(185, 119, 112, 0.24); border-bottom: 1px dashed rgba(185, 119, 112, 0.24); }
+      .ticket-video .video-layout::after { top: 28px; right: 7%; width: 58px; height: 58px; border: 1px dashed rgba(185, 119, 112, 0.32); border-radius: 50%; transform: rotate(12deg); }
 
       .cinema-ticket {
         position: relative;
         width: 100%;
-        padding: 18px 24px;
+        padding: 16px 30px 20px;
         border: 1px dashed #c99e96;
         border-radius: 8px;
         background-color: #f5ece4;
@@ -486,6 +496,21 @@
       .cinema-ticket::before, .cinema-ticket::after { content: ""; position: absolute; top: 50%; width: 8px; height: 76px; background: radial-gradient(circle, #bd9b8e 1px, transparent 1.6px) 0 0 / 8px 9px repeat-y; transform: translateY(-50%); pointer-events: none; }
       .cinema-ticket::before { left: 8px; }
       .cinema-ticket::after { right: 8px; }
+
+      .ticket-header-decor, .ticket-footer-decor { display: flex; align-items: center; gap: 10px; color: #b98d84; }
+      .ticket-header-decor { min-height: 25px; margin: 0 8px 10px; }
+      .ticket-reel { position: relative; width: 25px; height: 25px; flex: 0 0 auto; border: 2px solid #b98d84; border-radius: 50%; background: #ead9a6; }
+      .ticket-reel::before, .ticket-reel::after { content: ""; position: absolute; width: 4px; height: 4px; border: 1px solid #b98d84; border-radius: 50%; }
+      .ticket-reel::before { top: 4px; left: 4px; box-shadow: 9px 9px 0 -1px #ead9a6, 9px 9px 0 0 #b98d84; }
+      .ticket-reel::after { right: 4px; bottom: 4px; }
+      .ticket-rule { flex: 1 1 auto; border-top: 1px dashed #c9aaa3; }
+      .ticket-holes { display: flex; gap: 5px; }
+      .ticket-holes i { display: block; width: 7px; height: 7px; border: 1px solid #c9aaa3; border-radius: 50%; background: #fff8ee; }
+      .ticket-tape { position: absolute; z-index: 2; top: -8px; width: 66px; height: 18px; background: rgba(216, 183, 167, 0.64); box-shadow: 0 2px 4px rgba(74, 62, 61, 0.08); pointer-events: none; }
+      .ticket-tape-left { left: 14%; transform: rotate(-4deg); }
+      .ticket-tape-right { right: 14%; transform: rotate(5deg); }
+      .ticket-footer-decor { justify-content: center; min-height: 18px; margin: 13px 10px 0; }
+      .ticket-filmstrip { width: min(76%, 460px); height: 17px; border-top: 1px solid #c9aaa3; border-bottom: 1px solid #c9aaa3; background-image: radial-gradient(circle, #c9aaa3 0 3px, transparent 3.5px); background-position: 8px 50%; background-size: 16px 100%; opacity: 0.78; }
 
       .ticket-video .retro-tv { border-radius: 8px 8px 14px 14px; }
 
@@ -502,7 +527,7 @@
       .tv-screen video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #e9dfd3; object-fit: cover; }
       .tv-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 11px; color: #70534f; font-family: "Caveat", cursive; font-size: 1.12rem; }
       .tv-knobs { display: flex; gap: 8px; }
-      .tv-knobs span { display: block; width: 18px; height: 18px; border: 2px solid #9a7568; border-radius: 50%; background: #ead9a6; }
+      .tv-knobs i { display: block; width: 18px; height: 18px; border: 2px solid #9a7568; border-radius: 50%; background: #ead9a6; }
       .media-note { margin: 11px 0 0; color: #705d59; font-size: 0.88rem; }
 
       .letter-stage { display: grid; gap: 18px; justify-items: center; width: 100%; min-width: 0; }
@@ -596,9 +621,13 @@
         .ticket-letter .letter-stage { min-height: 372px; padding: 58px 6px 54px; }
         .mail-stamp { right: 8%; }
         .mail-ticket { left: 5%; }
-        .cinema-ticket { padding: 12px 12px; }
+        .cinema-ticket { padding: 13px 12px 16px; }
         .cinema-ticket::before { left: 4px; }
         .cinema-ticket::after { right: 4px; }
+        .ticket-header-decor { margin-right: 2px; margin-left: 2px; }
+        .ticket-tape-left { left: 10%; }
+        .ticket-tape-right { right: 10%; }
+        .ticket-filmstrip { width: 82%; }
         .letter-modal { padding: 12px; }
         .letter-modal-dialog { width: calc(100vw - 24px); max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); }
         .letter-modal-header { padding-left: 14px; }
@@ -734,6 +763,13 @@
           <button class="back-link" type="button" data-route="home">← 回到照片墙</button>
           <div class="video-layout">
             <div class="cinema-ticket">
+              <div class="ticket-header-decor" aria-hidden="true">
+                <span class="ticket-reel"></span>
+                <span class="ticket-rule"></span>
+                <span class="ticket-holes"><i></i><i></i><i></i></span>
+              </div>
+              <span class="ticket-tape ticket-tape-left" aria-hidden="true"></span>
+              <span class="ticket-tape ticket-tape-right" aria-hidden="true"></span>
               <div class="retro-tv">
                 <div class="tv-screen">
                   <video id="birthdayVideo" controls preload="metadata" poster="assets/photo-1.jpg" aria-label="生日祝福视频">
@@ -745,6 +781,7 @@
                   <span class="tv-knobs" aria-hidden="true"><i></i><i></i></span>
                 </div>
               </div>
+              <div class="ticket-footer-decor" aria-hidden="true"><span class="ticket-filmstrip"></span></div>
             </div>
           </div>
         </section>
